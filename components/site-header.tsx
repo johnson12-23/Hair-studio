@@ -22,10 +22,13 @@ export function SiteHeader() {
             <Scissors className="h-5 w-5" />
           </div>
           <div>
-            <p className="font-[var(--font-heading)] text-2xl font-semibold leading-none text-emerald-950">
+            <p className="micro-heading text-[0.62rem] font-semibold text-[#9c5f66]">
+              Luxury Hair Atelier
+            </p>
+            <p className="font-[var(--font-heading)] text-2xl font-semibold leading-none text-emerald-950 drop-shadow-[0_6px_18px_rgba(6,78,59,0.12)]">
               Abena
             </p>
-            <p className="mt-1 text-xs uppercase tracking-[0.35em] text-amber-700">
+            <p className="mt-1 text-xs uppercase tracking-[0.35em] text-amber-700 drop-shadow-[0_4px_10px_rgba(156,95,102,0.2)]">
               Hair Studio
             </p>
           </div>

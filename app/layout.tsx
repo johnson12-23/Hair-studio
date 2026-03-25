@@ -55,13 +55,13 @@ export default function RootLayout({
         className={`${headingFont.variable} ${bodyFont.variable} font-[var(--font-body)]`}
       >
         <AuthProvider>
-          <div className="relative overflow-hidden">
+          <div className="relative flex min-h-screen flex-col overflow-hidden">
             <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-soft-radial" />
-            <div className="pointer-events-none absolute -left-20 top-24 -z-10 h-72 w-72 rounded-full bg-emerald-200/35 blur-3xl animate-blob-a" />
-            <div className="pointer-events-none absolute right-0 top-40 -z-10 h-64 w-64 rounded-full bg-amber-200/35 blur-3xl animate-blob-b" />
-            <div className="pointer-events-none absolute left-1/3 top-[34rem] -z-10 h-60 w-60 rounded-full bg-emerald-100/35 blur-3xl animate-blob-c" />
+            <div className="parallax-layer pointer-events-none absolute -left-20 top-24 -z-10 h-72 w-72 rounded-full bg-emerald-200/35 blur-3xl animate-blob-a animate-parallax-slow" />
+            <div className="parallax-layer pointer-events-none absolute right-0 top-40 -z-10 h-64 w-64 rounded-full bg-[#cfac8f]/30 blur-3xl animate-blob-b animate-parallax-fast" />
+            <div className="parallax-layer pointer-events-none absolute left-1/3 top-[34rem] -z-10 h-60 w-60 rounded-full bg-[#d7aab0]/28 blur-3xl animate-blob-c animate-parallax-slow" />
             <SiteHeader />
-            <main>{children}</main>
+            <main className="flex-1">{children}</main>
             <SiteFooter />
           </div>
         </AuthProvider>

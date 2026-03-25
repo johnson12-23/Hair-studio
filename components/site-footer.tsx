@@ -3,7 +3,7 @@ import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-emerald-900/10 bg-white/70">
+    <footer className="border-t border-emerald-900/10 bg-white/70">
       <div className="section-shell grid gap-10 py-12 md:grid-cols-[1.3fr_1fr_1fr]">
         <div className="space-y-4">
           <div>
