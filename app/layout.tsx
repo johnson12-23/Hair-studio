@@ -57,6 +57,9 @@ export default function RootLayout({
         <AuthProvider>
           <div className="relative overflow-hidden">
             <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-soft-radial" />
+            <div className="pointer-events-none absolute -left-20 top-24 -z-10 h-72 w-72 rounded-full bg-emerald-200/35 blur-3xl animate-blob-a" />
+            <div className="pointer-events-none absolute right-0 top-40 -z-10 h-64 w-64 rounded-full bg-amber-200/35 blur-3xl animate-blob-b" />
+            <div className="pointer-events-none absolute left-1/3 top-[34rem] -z-10 h-60 w-60 rounded-full bg-emerald-100/35 blur-3xl animate-blob-c" />
             <SiteHeader />
             <main>{children}</main>
             <SiteFooter />
