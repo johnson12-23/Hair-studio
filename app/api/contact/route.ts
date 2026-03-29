@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     if (isSmtpConfigured()) {
       const adminRecipient = process.env.ADMIN_NOTIFICATION_EMAIL;
 
-      await Promise.allSettled([
+      const emailResults = await Promise.allSettled([
         sendEmail({
           to: payload.email,
           subject: "We received your message | Abena Hair Studio",
@@ -45,6 +45,12 @@ export async function POST(request: Request) {
             ]
           : [])
       ]);
+
+      emailResults.forEach((result, index) => {
+        if (result.status === "rejected") {
+          console.error(`Contact email send failed [${index}]`, result.reason);
+        }
+      });
     }
 
     return NextResponse.json({

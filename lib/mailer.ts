@@ -20,12 +20,15 @@ type SmtpConfig = {
 let transporter: nodemailer.Transporter | null = null;
 
 function getSmtpConfig(): SmtpConfig | null {
-  const host = process.env.SMTP_HOST;
+  const host = process.env.SMTP_HOST?.trim();
   const port = Number(process.env.SMTP_PORT ?? 587);
   const secure = process.env.SMTP_SECURE === "true";
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM;
+  const user = process.env.SMTP_USER?.trim();
+  const rawPass = process.env.SMTP_PASS?.trim();
+  const from = process.env.SMTP_FROM?.trim();
+
+  // Gmail app-passwords are often copied with spaces (e.g. "abcd efgh ijkl mnop").
+  const pass = host?.includes("gmail.com") ? rawPass?.replace(/\s+/g, "") : rawPass;
 
   if (!host || Number.isNaN(port) || !user || !pass || !from) {
     return null;
