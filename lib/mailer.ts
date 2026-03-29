@@ -115,8 +115,8 @@ export async function sendEmail(input: SendEmailInput) {
       replyTo: input.replyTo
     });
 
-    const accepted = (info.accepted ?? []).map((value) => String(value));
-    const rejected = (info.rejected ?? []).map((value) => String(value));
+    const accepted = (info.accepted ?? []).map((value: unknown) => String(value));
+    const rejected = (info.rejected ?? []).map((value: unknown) => String(value));
 
     if (accepted.length === 0) {
       return {
