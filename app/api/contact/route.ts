@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validations";
 import { getSupabaseAdmin } from "@/lib/supabase";
-import { isSmtpConfigured, sendEmail } from "@/lib/mailer";
+import { isSmtpConfigured, sendEmailWithRetry } from "@/lib/mailer";
 
 export async function POST(request: Request) {
   try {
@@ -28,30 +28,55 @@ export async function POST(request: Request) {
       const adminRecipient =
         process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || process.env.SMTP_USER?.trim();
 
-      const emailResults = await Promise.allSettled([
-        sendEmail({
-          to: payload.email,
-          subject: "We received your message | Abena Hair Studio",
-          text: `Hi ${payload.name},\n\nThank you for contacting Abena Hair Studio. We received your message and our team will reply shortly.\n\nYour message:\n${payload.message}\n\nWarm regards,\nAbena Hair Studio Team`,
-          replyTo: adminRecipient || undefined
-        }),
-        ...(adminRecipient
-          ? [
-              sendEmail({
-                to: adminRecipient,
-                subject: "New contact message received",
-                text: `A new contact message was submitted.\n\nName: ${payload.name}\nEmail: ${payload.email}\nMessage:\n${payload.message}`,
-                replyTo: payload.email
-              })
-            ]
-          : [])
-      ]);
-
-      emailResults.forEach((result, index) => {
-        if (result.status === "rejected") {
-          console.error(`Contact email send failed [${index}]`, result.reason);
-        }
+      const customerEmailResult = await sendEmailWithRetry({
+        to: payload.email,
+        subject: "We received your message | Abena Hair Studio",
+        text: `Hi ${payload.name},\n\nThank you for contacting Abena Hair Studio. We received your message and our team will reply shortly.\n\nYour message:\n${payload.message}\n\nWarm regards,\nAbena Hair Studio Team`,
+        replyTo: adminRecipient || undefined
       });
+
+      if (!customerEmailResult.ok) {
+        console.error("Contact customer email failed", {
+          to: payload.email,
+          reason: customerEmailResult.reason,
+          attempts: customerEmailResult.attempts,
+          error: customerEmailResult.error
+        });
+
+        return NextResponse.json(
+          {
+            ok: false,
+            message:
+              "Message saved, but confirmation email could not be delivered. Please verify your email address and submit again."
+          },
+          { status: 502 }
+        );
+      }
+
+      console.info("Contact customer email delivered", {
+        to: payload.email,
+        accepted: customerEmailResult.accepted,
+        rejected: customerEmailResult.rejected,
+        attempts: customerEmailResult.attempts
+      });
+
+      if (adminRecipient) {
+        const adminEmailResult = await sendEmailWithRetry({
+          to: adminRecipient,
+          subject: "New contact message received",
+          text: `A new contact message was submitted.\n\nName: ${payload.name}\nEmail: ${payload.email}\nMessage:\n${payload.message}`,
+          replyTo: payload.email
+        });
+
+        if (!adminEmailResult.ok) {
+          console.error("Contact admin notification failed", {
+            to: adminRecipient,
+            reason: adminEmailResult.reason,
+            attempts: adminEmailResult.attempts,
+            error: adminEmailResult.error
+          });
+        }
+      }
     }
 
     return NextResponse.json({

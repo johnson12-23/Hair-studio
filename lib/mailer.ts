@@ -8,6 +8,25 @@ type SendEmailInput = {
   replyTo?: string;
 };
 
+type SendEmailSuccess = {
+  ok: true;
+  accepted: string[];
+  rejected: string[];
+  response: string;
+};
+
+type SendEmailFailure = {
+  ok: false;
+  reason: "SMTP_NOT_CONFIGURED" | "SEND_FAILED";
+  error?: unknown;
+};
+
+type SendEmailResult = SendEmailSuccess | SendEmailFailure;
+
+type SendEmailWithRetryResult = SendEmailResult & {
+  attempts: number;
+};
+
 type SmtpConfig = {
   host: string;
   port: number;
@@ -64,6 +83,10 @@ export function isSmtpConfigured() {
   return Boolean(getSmtpConfig());
 }
 
+function normalizeRecipients(to: string | string[]) {
+  return (Array.isArray(to) ? to : [to]).map((value) => value.trim()).filter(Boolean);
+}
+
 export async function sendEmail(input: SendEmailInput) {
   const config = getSmtpConfig();
 
@@ -71,16 +94,73 @@ export async function sendEmail(input: SendEmailInput) {
     return { ok: false, reason: "SMTP_NOT_CONFIGURED" as const };
   }
 
+  const recipients = normalizeRecipients(input.to);
+  if (recipients.length === 0) {
+    return {
+      ok: false,
+      reason: "SEND_FAILED" as const,
+      error: new Error("No recipients were provided")
+    };
+  }
+
   const smtpTransport = getTransporter(config);
 
-  await smtpTransport.sendMail({
-    from: config.from,
-    to: input.to,
-    subject: input.subject,
-    text: input.text,
-    html: input.html,
-    replyTo: input.replyTo
-  });
+  try {
+    const info = await smtpTransport.sendMail({
+      from: config.from,
+      to: recipients,
+      subject: input.subject,
+      text: input.text,
+      html: input.html,
+      replyTo: input.replyTo
+    });
 
-  return { ok: true as const };
+    const accepted = (info.accepted ?? []).map((value) => String(value));
+    const rejected = (info.rejected ?? []).map((value) => String(value));
+
+    if (accepted.length === 0) {
+      return {
+        ok: false,
+        reason: "SEND_FAILED" as const,
+        error: new Error(`No recipients accepted by SMTP server. Rejected: ${rejected.join(", ")}`)
+      };
+    }
+
+    return {
+      ok: true,
+      accepted,
+      rejected,
+      response: info.response
+    } satisfies SendEmailSuccess;
+  } catch (error) {
+    return {
+      ok: false,
+      reason: "SEND_FAILED" as const,
+      error
+    } satisfies SendEmailFailure;
+  }
+}
+
+export async function sendEmailWithRetry(
+  input: SendEmailInput,
+  maxAttempts = 2
+): Promise<SendEmailWithRetryResult> {
+  const attempts = Math.max(1, maxAttempts);
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const result = await sendEmail(input);
+
+    if (result.ok || result.reason === "SMTP_NOT_CONFIGURED" || attempt === attempts) {
+      return { ...result, attempts };
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, attempt * 350));
+  }
+
+  return {
+    ok: false,
+    reason: "SEND_FAILED",
+    attempts,
+    error: new Error("Unknown email delivery error")
+  };
 }
