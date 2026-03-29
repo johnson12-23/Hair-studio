@@ -50,6 +50,11 @@ export function BookingForm() {
             type="email"
             name="email"
             placeholder="you@example.com"
+            inputMode="email"
+            autoComplete="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             className="w-full rounded-2xl border border-rosewood/10 bg-sand/70 px-4 py-3 text-base outline-none transition focus:border-terracotta focus:ring-1 focus:ring-terracotta"
             required
           />
