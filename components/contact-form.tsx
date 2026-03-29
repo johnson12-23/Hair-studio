@@ -13,6 +13,18 @@ export function ContactForm() {
 
   async function handleSubmit(formData: FormData) {
     const payload = Object.fromEntries(formData.entries());
+    const email = String(payload.email ?? "").trim().toLowerCase();
+    const confirmEmail = String(payload.confirmEmail ?? "").trim().toLowerCase();
+
+    if (email !== confirmEmail) {
+      setState({
+        ok: false,
+        message: "Email addresses do not match. Please check and try again."
+      });
+      return;
+    }
+
+    delete payload.confirmEmail;
 
     const response = await fetch("/api/contact", {
       method: "POST",
@@ -46,6 +58,21 @@ export function ContactForm() {
           type="email"
           name="email"
           placeholder="you@example.com"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          className="w-full rounded-2xl border border-rosewood/10 bg-sand/70 px-4 py-3 text-base outline-none transition focus:border-terracotta focus:ring-1 focus:ring-terracotta"
+          required
+        />
+      </label>
+      <label className="space-y-2 text-sm font-medium text-ink/80">
+        Confirm Email
+        <input
+          type="email"
+          name="confirmEmail"
+          placeholder="Re-enter your email"
           inputMode="email"
           autoComplete="email"
           autoCapitalize="none"

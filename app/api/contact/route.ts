@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       message: supabase
-        ? "Message received. Our team will reply soon."
+        ? `Message received. Confirmation sent to ${payload.email}.`
         : "Contact form is ready. Add Supabase keys to store messages."
     });
   } catch {
