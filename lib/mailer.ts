@@ -150,8 +150,23 @@ export async function sendEmailWithRetry(
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     const result = await sendEmail(input);
 
-    if (result.ok || result.reason === "SMTP_NOT_CONFIGURED" || attempt === attempts) {
-      return { ...result, attempts };
+    if (result.ok) {
+      return {
+        ok: true,
+        accepted: result.accepted,
+        rejected: result.rejected,
+        response: result.response,
+        attempts
+      };
+    }
+
+    if (result.reason === "SMTP_NOT_CONFIGURED" || attempt === attempts) {
+      return {
+        ok: false,
+        reason: result.reason,
+        error: result.error,
+        attempts
+      };
     }
 
     await new Promise((resolve) => setTimeout(resolve, attempt * 350));
