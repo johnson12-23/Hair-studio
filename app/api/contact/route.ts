@@ -25,7 +25,8 @@ export async function POST(request: Request) {
     }
 
     if (isSmtpConfigured()) {
-      const adminRecipient = process.env.ADMIN_NOTIFICATION_EMAIL;
+      const adminRecipient =
+        process.env.ADMIN_NOTIFICATION_EMAIL?.trim() || process.env.SMTP_USER?.trim();
 
       const emailResults = await Promise.allSettled([
         sendEmail({
