@@ -106,8 +106,17 @@ export async function sendEmail(input: SendEmailInput) {
   const smtpTransport = getTransporter(config);
 
   try {
+    const fromAddress = config.from.includes("<")
+      ? config.from
+      : `"Abena Hair Studio" <${config.user}>`;
+
     const info = await smtpTransport.sendMail({
-      from: config.from,
+      from: fromAddress,
+      sender: config.user,
+      envelope: {
+        from: config.user,
+        to: recipients
+      },
       to: recipients,
       subject: input.subject,
       text: input.text,
