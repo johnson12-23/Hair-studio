@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { bookingSchema } from "@/lib/validations";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { isSmtpConfigured, sendEmail } from "@/lib/mailer";
 
 export async function POST(request: Request) {
   try {
@@ -24,6 +25,29 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
+    }
+
+    if (isSmtpConfigured()) {
+      const adminRecipient = process.env.ADMIN_NOTIFICATION_EMAIL;
+
+      await Promise.allSettled([
+        sendEmail({
+          to: payload.email,
+          subject: "Booking request received | Abena Hair Studio",
+          text: `Hi ${payload.fullName},\n\nThank you for choosing Abena Hair Studio. We received your booking request and will confirm your appointment shortly.\n\nService: ${payload.service}\nPreferred date: ${payload.date}\nPhone: ${payload.phone}\n${payload.notes ? `Notes: ${payload.notes}\n` : ""}\nWarm regards,\nAbena Hair Studio Team`,
+          replyTo: adminRecipient || undefined
+        }),
+        ...(adminRecipient
+          ? [
+              sendEmail({
+                to: adminRecipient,
+                subject: "New booking request received",
+                text: `A new booking request was submitted.\n\nName: ${payload.fullName}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nService: ${payload.service}\nPreferred date: ${payload.date}\n${payload.notes ? `Notes: ${payload.notes}` : "Notes: -"}`,
+                replyTo: payload.email
+              })
+            ]
+          : [])
+      ]);
     }
 
     return NextResponse.json({
