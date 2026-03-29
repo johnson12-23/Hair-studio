@@ -24,6 +24,7 @@ export function ContactForm() {
       return;
     }
 
+    payload.email = email;
     delete payload.confirmEmail;
 
     const response = await fetch("/api/contact", {
