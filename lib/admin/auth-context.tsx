@@ -21,31 +21,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (stored in localStorage)
-    const storedUser = localStorage.getItem("adminUser");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    let isMounted = true;
+
+    fetch("/api/admin/auth", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) {
+          return null;
+        }
+        const data = (await response.json()) as { user?: AdminUser };
+        return data.user ?? null;
+      })
+      .then((authenticatedUser) => {
+        if (isMounted) {
+          setUser(authenticatedUser);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setUser(null);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Simple authentication - in production, call your backend API
-    if (email === "abenahairstudio@gmail.com" && password === "Bella2012$.") {
-      const adminUser: AdminUser = {
-        email,
-        name: "Abena Hair Studio"
-      };
-      setUser(adminUser);
-      localStorage.setItem("adminUser", JSON.stringify(adminUser));
-    } else {
-      throw new Error("Invalid email or password");
+    const response = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const data = (await response.json()) as {
+      user?: AdminUser;
+      message?: string;
+    };
+
+    if (!response.ok || !data.user) {
+      throw new Error(data.message || "Unable to log in.");
     }
+
+    setUser(data.user);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("adminUser");
+    void fetch("/api/admin/auth", { method: "DELETE" });
   };
 
   return (

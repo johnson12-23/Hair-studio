@@ -106,16 +106,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Helper Text */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-600 text-center">
-              <strong>Demo Credentials:</strong>
-              <br />
-              Email: abenahairstudio@gmail.com
-              <br />
-              Password: Bella2012$.
-            </p>
-          </div>
         </div>
       </div>
     </div>

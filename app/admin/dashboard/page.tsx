@@ -116,7 +116,7 @@ export default function AdminDashboard() {
       <>
         <AdminNavbar title="Dashboard" />
         <main className="flex-1 overflow-auto">
-          <div className="ml-0 lg:ml-64 p-6 flex items-center justify-center h-96">
+          <div className="flex h-96 items-center justify-center px-4 sm:px-6">
             <div className="text-center">
               <div className="inline-block animate-spin">
                 <div className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full" />
@@ -134,9 +134,9 @@ export default function AdminDashboard() {
       <AdminNavbar title="Dashboard" />
 
       <main className="flex-1 overflow-auto">
-        <div className="ml-0 lg:ml-64 p-6 space-y-8">
+        <div className="space-y-6 px-4 py-5 sm:space-y-8 sm:px-6">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => (
               <StatsCard key={stat.title} {...stat} />
             ))}
@@ -153,11 +153,8 @@ export default function AdminDashboard() {
               ) : (
                 <div className="divide-y divide-gray-200">
                   {recentActivity.map((item: any) => (
-                    <div
-                      key={`${item.type}-${item.id}`}
-                      className="p-4 hover:bg-gray-50 transition"
-                    >
-                      <div className="flex items-start justify-between">
+                    <div key={`${item.type}-${item.id}`} className="p-4 transition hover:bg-gray-50">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                           <p className="font-medium text-black">
                             {item.type === "message"
@@ -170,7 +167,7 @@ export default function AdminDashboard() {
                               : `Service: ${item.service}`}
                           </p>
                         </div>
-                        <span className="text-xs text-gray-500 whitespace-nowrap ml-4">
+                        <span className="text-xs text-gray-500 sm:ml-4 sm:whitespace-nowrap">
                           {timeAgo(item.created_at)}
                         </span>
                       </div>
@@ -182,7 +179,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Top Services */}
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <h3 className="text-lg font-bold text-black mb-4">Top Services</h3>

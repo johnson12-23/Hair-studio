@@ -12,16 +12,16 @@ export function AdminNavbar({ title }: NavbarProps) {
 
   return (
     <header className="border-b border-gray-200 bg-white">
-      <div className="ml-0 lg:ml-64 px-6 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-black">{title}</h1>
+      <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6">
+        <h1 className="text-xl font-bold text-black sm:text-2xl">{title}</h1>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 sm:gap-6">
           <button className="p-2 hover:bg-gray-100 rounded-lg transition">
             <Bell size={20} className="text-gray-600" />
           </button>
 
-          <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
-            <div className="text-right">
+          <div className="flex items-center gap-3 border-l border-gray-200 pl-3 sm:pl-6">
+            <div className="hidden text-right sm:block">
               <p className="text-sm font-medium text-black">{user?.name}</p>
               <p className="text-xs text-gray-600">{user?.email}</p>
             </div>

@@ -44,38 +44,80 @@ export function DataTable<T extends { id: string }>({
     );
   }
 
+  const renderCellValue = (item: T, column: TableColumn<T>) => {
+    const value = item[column.key];
+    return column.render ? column.render(value, item) : String(value ?? "-");
+  };
+
   return (
-    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-      <div className="overflow-x-auto">
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <div className="space-y-3 p-3 md:hidden">
+        {data.map((item) => (
+          <article key={item.id} className="rounded-lg border border-gray-200 p-4">
+            <dl className="space-y-3">
+              {columns.map((column) => (
+                <div key={String(column.key)}>
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                    {column.label}
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-900">{renderCellValue(item, column)}</dd>
+                </div>
+              ))}
+            </dl>
+
+            {(onDelete || onView) && (
+              <div className="mt-4 flex items-center gap-2 border-t border-gray-200 pt-3">
+                {onView && (
+                  <button
+                    onClick={() => onView(item.id)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
+                    title="View"
+                  >
+                    <Eye size={16} className="text-gray-600" />
+                    View
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    onClick={() => onDelete(item.id)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm text-red-700 transition hover:bg-red-50"
+                    title="Delete"
+                  >
+                    <Trash2 size={16} className="text-red-600" />
+                    Delete
+                  </button>
+                )}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
               {columns.map((column) => (
                 <th
                   key={String(column.key)}
-                  className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                  className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
                 >
                   {column.label}
                 </th>
               ))}
               {(onDelete || onView) && (
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                   Actions
                 </th>
               )}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {data.map((item, index) => (
-              <tr key={item.id} className="hover:bg-gray-50 transition">
+            {data.map((item) => (
+              <tr key={item.id} className="transition hover:bg-gray-50">
                 {columns.map((column) => (
-                  <td
-                    key={String(column.key)}
-                    className="px-6 py-4 text-sm text-gray-900"
-                  >
-                    {column.render
-                      ? column.render(item[column.key], item)
-                      : String(item[column.key]) || "-"}
+                  <td key={String(column.key)} className="px-6 py-4 text-sm text-gray-900">
+                    {renderCellValue(item, column)}
                   </td>
                 ))}
                 {(onDelete || onView) && (
@@ -84,7 +126,7 @@ export function DataTable<T extends { id: string }>({
                       {onView && (
                         <button
                           onClick={() => onView(item.id)}
-                          className="p-2 hover:bg-gray-200 rounded-lg transition"
+                          className="rounded-lg p-2 transition hover:bg-gray-200"
                           title="View"
                         >
                           <Eye size={16} className="text-gray-600" />
@@ -93,7 +135,7 @@ export function DataTable<T extends { id: string }>({
                       {onDelete && (
                         <button
                           onClick={() => onDelete(item.id)}
-                          className="p-2 hover:bg-red-100 rounded-lg transition"
+                          className="rounded-lg p-2 transition hover:bg-red-100"
                           title="Delete"
                         >
                           <Trash2 size={16} className="text-red-600" />

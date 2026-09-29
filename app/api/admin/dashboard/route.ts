@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { hasValidAdminSession } from "@/lib/admin/session";
 
 type MessageRow = {
   id: string;
@@ -20,7 +21,11 @@ type BookingRow = {
   created_at: string;
 };
 
-export async function GET() {
+export async function GET(request: Request) {
+  if (!hasValidAdminSession(request)) {
+    return NextResponse.json({ message: "Not authenticated." }, { status: 401 });
+  }
+
   try {
     const supabase = getSupabaseAdmin();
 

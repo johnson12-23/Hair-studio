@@ -1,19 +1,24 @@
 "use client";
 
 import { useAuth } from "@/lib/admin/auth-context";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AdminSidebar } from "@/components/admin/sidebar";
 
 export function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (pathname !== "/admin/login" && !isLoading && !user) {
       router.push("/admin/login");
     }
-  }, [user, isLoading, router]);
+  }, [pathname, user, isLoading, router]);
+
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
 
   if (isLoading) {
     return (
@@ -33,9 +38,9 @@ export function AdminLayoutWrapper({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden pt-14 lg:pt-0">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden pt-16 lg:pt-0">
         {children}
       </div>
     </div>

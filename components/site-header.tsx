@@ -17,18 +17,18 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-emerald-900/10 bg-white/85 backdrop-blur-xl">
       <div className="section-shell flex h-20 items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex max-w-[calc(100vw-6rem)] items-center gap-2.5 sm:max-w-none sm:gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-900 to-emerald-700 text-white shadow-[0_10px_24px_rgba(6,78,59,0.25)]">
             <Scissors className="h-5 w-5" />
           </div>
-          <div>
-            <p className="micro-heading text-[0.62rem] font-semibold text-[#9c5f66]">
+          <div className="min-w-0">
+            <p className="micro-heading hidden text-[0.62rem] font-semibold text-[#9c5f66] sm:block">
               Luxury Hair Atelier
             </p>
-            <p className="font-[var(--font-heading)] text-2xl font-semibold leading-none text-emerald-950 drop-shadow-[0_6px_18px_rgba(6,78,59,0.12)]">
+            <p className="truncate font-[var(--font-heading)] text-xl font-semibold leading-none text-emerald-950 drop-shadow-[0_6px_18px_rgba(6,78,59,0.12)] sm:text-2xl">
               Abena
             </p>
-            <p className="mt-1 text-xs uppercase tracking-[0.35em] text-amber-700 drop-shadow-[0_4px_10px_rgba(156,95,102,0.2)]">
+            <p className="mt-1 truncate text-[0.65rem] uppercase tracking-[0.24em] text-amber-700 drop-shadow-[0_4px_10px_rgba(156,95,102,0.2)] sm:text-xs sm:tracking-[0.35em]">
               Hair Studio
             </p>
           </div>

@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { hasValidAdminSession } from "@/lib/admin/session";
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+  if (!hasValidAdminSession(request)) {
+    return NextResponse.json({ message: "Not authenticated." }, { status: 401 });
+  }
+
   try {
     const { id } = await context.params;
     const supabase = getSupabaseAdmin();

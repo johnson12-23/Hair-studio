@@ -98,14 +98,14 @@ export default function BookingsPage() {
       <AdminNavbar title="Bookings" />
 
       <main className="flex-1 overflow-auto">
-        <div className="ml-0 lg:ml-64 p-6">
+        <div className="px-4 py-5 sm:px-6">
           <div className="mb-6">
             <p className="text-gray-600">
               Manage customer bookings and appointments
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Bookings Table */}
             <div className="lg:col-span-2">
               <DataTable<Booking>

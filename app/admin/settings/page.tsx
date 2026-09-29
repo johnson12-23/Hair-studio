@@ -34,7 +34,7 @@ export default function SettingsPage() {
       <AdminNavbar title="Settings" />
 
       <main className="flex-1 overflow-auto">
-        <div className="ml-0 lg:ml-64 p-6">
+        <div className="px-4 py-5 sm:px-6">
           <div className="max-w-2xl">
             {/* Header */}
             <div className="mb-8">
@@ -138,17 +138,17 @@ export default function SettingsPage() {
               </div>
 
               {/* Save Button */}
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-8 py-2 bg-black text-white rounded-lg hover:bg-gray-900 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed transition font-medium"
+                  className="w-full rounded-lg bg-black px-8 py-2 font-medium text-white transition hover:bg-gray-900 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
                 >
                   {isSaving ? "Saving..." : "Save Changes"}
                 </button>
                 <button
                   type="button"
-                  className="px-8 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                  className="w-full rounded-lg border border-gray-300 px-8 py-2 font-medium text-gray-700 transition hover:bg-gray-50 sm:w-auto"
                 >
                   Cancel
                 </button>
